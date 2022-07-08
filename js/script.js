@@ -1,12 +1,14 @@
 'use strict';
 
-// document.getElementById('test-button').addEventListener('click', function () {
-//     const links = document.querySelectorAll('.titles a');
-//     console.log('links: ', links );
-// });
 const titleClickHandler = function(event) {
-    console.log('Link was clicked!');
-    console.log(event);
+    event.preventDefault();
+    const activeLinks = document.querySelectorAll('.titles a.active');
+    activeLinks.forEach(activeLink => activeLink.classList.remove('active'));
+    const activeArticles = document.querySelectorAll('.posts article.active');
+    activeArticles.forEach(activeArticle => activeArticle.classList.remove('active'));
+    this.classList.add('active');
+    const article = this.getAttribute('href');
+    document.querySelector(article).classList.add('active');
 }
 
 const links = document.querySelectorAll('.titles a');
