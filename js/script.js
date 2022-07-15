@@ -1,11 +1,14 @@
 {
     'use strict';
-
+    let allTags = {};
     const optArticleSelector = '.post',
         optTitleSelector = '.post-title',
         optTitleListSelector = '.titles',
         optArticleTagsSelector = '.post-tags .list',
-        optArticleAuthorSelector = '.post-author';
+        optArticleAuthorSelector = '.post-author',
+        optTagsListSelector = '.tags.list',
+        optCloudClassCount = 5,
+        optCloudClassPrefix = 'tag-size-';
 
     const titleClickHandler = function (event) {
         event.preventDefault();
@@ -44,24 +47,54 @@
 
     generateTitleLinks();
 
+    const calculateTagsParams = function (tags) {
+        let min = 999999; 
+        let max = 0; 
+        let object = {};
+        const values =  Object.values(tags);
+        for (let i = 0; i < values.length; i++) {
+            if(values[i] < min) min = values[i];
+            if(values[i] > max )  max = values[i];
+        }
+        return {max, min}
+    }
+    const calculateTagClass = function (count, params) {
+        let classNumber = Math.floor( ( (count - params.min) / (params.max - params.min) ) * optCloudClassCount + 1);
+        return optCloudClassPrefix+classNumber;
+    }
     const generateTags = function () {
         const articles = document.querySelectorAll(optArticleSelector);
         articles.forEach(article => {
-            //console.log(article);
             let html = '';
             const tagsWrapper = article.querySelector(optArticleTagsSelector);
             const articleTags = article.getAttribute('data-tags').split(' ');
-            //console.log(articleTags);
         
             articleTags.forEach(articleTag => {
                 const link = '<li><a href="#tag-'+articleTag+'">'+articleTag+'</a></li> ';
                 html += link;
-
+                if(!allTags[articleTag]) {
+                    allTags[articleTag] = 1;
+                } else {
+                    allTags[articleTag]++;
+                }
             });
             tagsWrapper.innerHTML = html;
-            //console.log('tagsWrapper', tagsWrapper);
         });
-        
+        const tagList = document.querySelector(optTagsListSelector);
+       // tagList.innerHTML = allTags.join(' ');
+       console.log('allTags', allTags);
+       const tagsParams = calculateTagsParams(allTags);
+       console.log(tagsParams);
+       let allTagsHTML = '';
+       for(let tag in allTags) {
+        allTagsHTML += '<li><a href="#tag-'+tag+'" class="'+calculateTagClass(allTags[tag], tagsParams)+'">'+tag+' (' + allTags[tag] + ')</li>'; //<li><a href="#">design</a> <span>(6)</span></li>
+        console.log('allTagsHTML w pętli', allTagsHTML);
+       }
+       console.log('allTagsHTML', allTagsHTML);
+
+       console.log(tagList);
+       tagList.innerHTML = allTagsHTML;
+
     }
 
     generateTags();
