@@ -150,7 +150,6 @@
         const clickedAuthor = this.getAttribute('href');
         const author = clickedAuthor.replace('#author-', '');
         generateTitleLinks('[data-author="'+author+'"]');
-        generateTags();
     }
     const addClickListenersToAuthors = function () {
         const authors = document.querySelectorAll('a[href^="#author-"]');
